@@ -1,0 +1,22 @@
+apiVersion: flagger.app/v1
+kind: Canary
+metadata:
+  name: myapp
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mywebapp
+  service:
+    port: 80
+  analysis:
+    interval: 2m
+    threshold: 5
+    stepWeight: 10
+    metrics:
+    - name: request-success-rate
+    - name: request-duration
+    webhooks:
+      - name: acceptance-test
+        type: pre-rollout
+        url: http://flagger-loadtester.test/

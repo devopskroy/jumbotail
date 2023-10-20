@@ -1,0 +1,65 @@
+# create  a values.yaml file
+
+master:
+  name: jenkins-master
+  image: jenkins/jenkins
+  imageTag: x.xx***
+  imagePullPolicy: Always
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "2"
+  installPlugins:
+    - kubernetes:x.xx.x
+
+serviceType: LoadBalancer
+
+# Install Jenkins using Helm:
+helm install jenkins stable/jenkins -f values.yaml
+
+---------------------------------------------------
+
+Create Jenkins pipeline jobs that build Docker images for your services. In your Jenkinsfile, use the Docker plugin to build and push images.
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    def app = docker.build("my-service:${env.BUILD_NUMBER}")
+                    app.push()
+                }
+            }
+        }
+    }
+}
+
+-----------------------------------------------------------
+
+Automate the versioning of Docker images based on code changes.
+
+==================================================================
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    def app = docker.build("my-service:${sh(script: 'git rev-parse --short HEAD', returnStatus: true)}")
+                    app.push()
+                }
+            }
+        }
+    }
+}
+
+
+
+

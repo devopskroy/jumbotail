@@ -1,6 +1,7 @@
 resource "aws_eks_cluster" "my_cluster" {
   name     = var.cluster_name
   role_arn = aws_iam_role.eks_cluster_role.arn
+  enabled_cluster_log_types = ["api", "audit"]
   vpc_config {
     subnet_ids = [aws_subnet.example1.id, aws_subnet.example2.id]
   }
